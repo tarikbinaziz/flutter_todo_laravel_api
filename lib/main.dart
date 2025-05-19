@@ -18,7 +18,8 @@ class _TaskScreenState extends State<TaskScreen> {
   List tasks = [];
   final TextEditingController _controller = TextEditingController();
 
-  final String baseUrl = 'http://127.0.0.1:8000/api/tasks';
+  // final String baseUrl = 'http://127.0.0.1:8000/api/tasks';
+  final String baseUrl = 'http://10.0.2.2:8000/api/tasks';
 
   Future<void> fetchTasks() async {
     final response = await http.get(Uri.parse(baseUrl));
@@ -30,14 +31,20 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   Future<void> addTask(String title) async {
-    final response = await http.post(
-      Uri.parse(baseUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'title': title}),
-    );
-    if (response.statusCode == 201) {
-      _controller.clear();
-      fetchTasks(); // নতুন task যোগ হলে লিস্ট রিফ্রেশ করো
+    print('Adding task: $title');
+    try {
+      final response = await http.post(
+        Uri.parse(baseUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'title': title}),
+      );
+      print('Response status: ${response.statusCode}');
+      if (response.statusCode == 201) {
+        _controller.clear();
+        fetchTasks(); // নতুন task যোগ হলে লিস্ট রিফ্রেশ করো
+      }
+    } catch (e) {
+      print('Error adding task: $e');
     }
   }
 
