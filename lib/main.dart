@@ -53,6 +53,13 @@ class _TaskScreenState extends State<TaskScreen> {
     }
   }
 
+  Future<void> deleteTask(int id) async {
+    final response = await http.delete(Uri.parse("$baseUrl/task/$id"));
+    if (response.statusCode == 200) {
+      fetchTasks();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -90,7 +97,15 @@ class _TaskScreenState extends State<TaskScreen> {
             child: ListView.builder(
               itemCount: tasks.length,
               itemBuilder: (context, index) {
-                return ListTile(title: Text(tasks[index]['title']));
+                return ListTile(
+                  title: Text(tasks[index]['title']),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      deleteTask(tasks[index]['id']);
+                    },
+                  ),
+                );
               },
             ),
           ),
