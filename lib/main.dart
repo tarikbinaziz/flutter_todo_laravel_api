@@ -19,10 +19,11 @@ class _TaskScreenState extends State<TaskScreen> {
   final TextEditingController _controller = TextEditingController();
 
   // final String baseUrl = 'http://127.0.0.1:8000/api/tasks';
-  final String baseUrl = 'http://10.0.2.2:8000/api/tasks';
+  final String baseUrl = 'http://192.168.0.233:8000/api';
 
   Future<void> fetchTasks() async {
-    final response = await http.get(Uri.parse(baseUrl));
+    final response = await http.get(Uri.parse("$baseUrl/tasks"));
+    debugPrint("getstatus code: ${response.statusCode}");
     if (response.statusCode == 200) {
       setState(() {
         tasks = json.decode(response.body);
@@ -34,10 +35,14 @@ class _TaskScreenState extends State<TaskScreen> {
     print('Adding task: $title');
     try {
       final response = await http.post(
-        Uri.parse(baseUrl),
-        headers: {'Content-Type': 'application/json'},
+        Uri.parse("$baseUrl/task/store"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         body: json.encode({'title': title}),
       );
+      print('Response body: ${response.body}');
       print('Response status: ${response.statusCode}');
       if (response.statusCode == 201) {
         _controller.clear();
